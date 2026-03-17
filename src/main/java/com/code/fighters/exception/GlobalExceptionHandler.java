@@ -66,4 +66,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(
                 new ErrorResponseDTO(status.value(), message, path, LocalDateTime.now()));
     }
+
+    // error 400: lógica de juego (cooldown, vida, etc)
+@ExceptionHandler({ RuntimeException.class, IllegalStateException.class })
+    public ResponseEntity<ErrorResponseDTO> handleGameLogic(
+            RuntimeException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI());
+    }
 }

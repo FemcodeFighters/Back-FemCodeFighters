@@ -2,8 +2,12 @@ package com.code.fighters.entity;
 
 import java.time.LocalDateTime;
 
+import com.code.fighters.entity.enums.UltimateSkill;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +29,15 @@ public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Builder.Default
+    private int health = 100;
+
+    @Builder.Default
+    private int wins = 0;
+
+    @Builder.Default
+    private int losses = 0;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
@@ -61,6 +74,13 @@ public class Player {
     @Column(name = "updated_at")
     @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ultimate_skill")
+    @Builder.Default
+    private UltimateSkill ultimateSkill = UltimateSkill.FRIDAY_DEPLOY;
+
+    private LocalDateTime lastUltimateUsed;
 
     protected Player() {}
 }
