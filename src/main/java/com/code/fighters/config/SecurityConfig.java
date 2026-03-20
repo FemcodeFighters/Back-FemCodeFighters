@@ -39,8 +39,9 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
-    .requestMatchers("/api/auth/**").permitAll() // Login y Registro libre
-    .requestMatchers("/api/player/**").authenticated() // Esto requiere el Token de Axios
+    .requestMatchers("/api/auth/**").permitAll()
+    .requestMatchers("/api/health").permitAll()
+    .requestMatchers("/api/player/**").authenticated()
     .anyRequest().authenticated()
 )
             
@@ -77,7 +78,6 @@ public class SecurityConfig {
 public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); 
-    // AGREGAMOS "PATCH" a la lista de abajo:
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")); 
     configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
     configuration.setAllowCredentials(true);
