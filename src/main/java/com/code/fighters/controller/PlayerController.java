@@ -23,6 +23,7 @@ import com.code.fighters.dto.request.updatePlayer.UpdOutfitRequestDTO;
 import com.code.fighters.dto.request.updatePlayer.UpdSkinColorRequestDTO;
 import com.code.fighters.dto.request.updatePlayer.UpdUltimateRequestDTO;
 import com.code.fighters.dto.response.PlayerResponseDTO;
+import com.code.fighters.dto.response.UltimateConfigResponseDTO;
 import com.code.fighters.service.PlayerService;
 
 import jakarta.validation.Valid;
@@ -37,13 +38,12 @@ public class PlayerController {
     private final PlayerService playerService;
 
     @GetMapping
-public ResponseEntity<PlayerResponseDTO> getCharacter(Principal principal) {
-    // Principal siempre contiene el 'name' (username) si el token es válido
-    if (principal == null) {
-        return ResponseEntity.status(401).build();
+    public ResponseEntity<PlayerResponseDTO> getCharacter(Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok(playerService.getCharacter(principal.getName()));
     }
-    return ResponseEntity.ok(playerService.getCharacter(principal.getName()));
-}
 
     @PatchMapping("/skin")
     public ResponseEntity<PlayerResponseDTO> updateSkinColor(
@@ -119,12 +119,19 @@ public ResponseEntity<PlayerResponseDTO> getCharacter(Principal principal) {
         return ResponseEntity.ok(playerService.getRanking());
     }
 
-@PostMapping("/combat-result/{won}")
+    @PostMapping("/combat-result/{won}")
     public ResponseEntity<Void> updateCombatStats(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable boolean won) {
-        
+
         playerService.updateStats(userDetails.getUsername(), won);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/ultimate-config")
+    public ResponseEntity<UltimateConfigResponseDTO> getUltimateConfig(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(
+                playerService.getUltimateConfig(userDetails.getUsername()));
     }
 }

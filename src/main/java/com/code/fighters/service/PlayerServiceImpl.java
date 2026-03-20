@@ -15,6 +15,7 @@ import com.code.fighters.dto.request.updatePlayer.UpdOutfitRequestDTO;
 import com.code.fighters.dto.request.updatePlayer.UpdSkinColorRequestDTO;
 import com.code.fighters.dto.request.updatePlayer.UpdUltimateRequestDTO;
 import com.code.fighters.dto.response.PlayerResponseDTO;
+import com.code.fighters.dto.response.UltimateConfigResponseDTO;
 import com.code.fighters.entity.Player;
 import com.code.fighters.entity.User;
 import com.code.fighters.exception.PlayerNotFoundException;
@@ -49,7 +50,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-   @Transactional
+    @Transactional
     public PlayerResponseDTO updateHair(String email, UpdHairRequestDTO request) {
         Player player = findByEmail(email);
         player.setHairStyle(request.hairStyle());
@@ -59,7 +60,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-   @Transactional
+    @Transactional
     public PlayerResponseDTO updateEyeColor(String email, UpdEyeColorRequestDTO request) {
         Player player = findByEmail(email);
         player.setEyeColor(request.eyeColor());
@@ -103,7 +104,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-   @Transactional
+    @Transactional
     public PlayerResponseDTO resetCharacter(String email) {
         Player player = findByEmail(email);
         player.setSkinColor("#f5c5a3");
@@ -125,7 +126,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-   @Transactional
+    @Transactional
     public PlayerResponseDTO updateUltimateSkill(String email, UpdUltimateRequestDTO request) {
         Player player = findByEmail(email);
         player.setUltimateSkill(request.ultimateSkill());
@@ -187,27 +188,54 @@ public class PlayerServiceImpl implements PlayerService {
 
     }
 
-   @Override
-@Transactional
-public void updateStats(String email, boolean won) {
-    Player player = findByEmail(email); // Reutilizas tu método privado que ya maneja excepciones
+    @Override
+    @Transactional
+    public void updateStats(String email, boolean won) {
+        Player player = findByEmail(email);
 
-    if (won) {
-        player.setWins(player.getWins() + 1);
-    } else {
-        player.setLosses(player.getLosses() + 1);
+        if (won) {
+            player.setWins(player.getWins() + 1);
+        } else {
+            player.setLosses(player.getLosses() + 1);
+        }
+
+        player.setUpdatedAt(LocalDateTime.now());
+        playerRepository.save(player);
     }
-    
-    player.setUpdatedAt(LocalDateTime.now());
-    playerRepository.save(player);
-}
 
     @Override
     @Transactional(readOnly = true)
-public List<PlayerResponseDTO> getRanking() {
-    return playerRepository.findTop10ByOrderByWinsDesc()
-            .stream()
-            .map(playerMapper::toDto)
-            .toList();
-}
+    public List<PlayerResponseDTO> getRanking() {
+        return playerRepository.findTop10ByOrderByWinsDesc()
+                .stream()
+                .map(playerMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public UltimateConfigResponseDTO getUltimateConfig(String username) {
+        Player player = findByEmail(username);
+        return switch (player.getUltimateSkill()) {
+            case FRIDAY_DEPLOY -> new UltimateConfigResponseDTO(
+                    "FRIDAY_DEPLOY",
+                    GameBalanceConfig.FRIDAY_DEPLOY_HEAL,
+                    true, 3000,
+                    0, 0, 0, 0,
+                    GameBalanceConfig.GLOBAL_ULTIMATE_COOLDOWN_MS);
+            case SPAGHETTI_CODE -> new UltimateConfigResponseDTO(
+                    "SPAGHETTI_CODE",
+                    0, false, 0,
+                    GameBalanceConfig.SPAGHETTI_TICK_DAMAGE,
+                    GameBalanceConfig.SPAGHETTI_TICK_COUNT,
+                    GameBalanceConfig.SPAGHETTI_TICK_INTERVAL_MS,
+                    0,
+                    GameBalanceConfig.GLOBAL_ULTIMATE_COOLDOWN_MS);
+            case GIT_CLONE -> new UltimateConfigResponseDTO(
+                    "GIT_CLONE",
+                    0, false, 0,
+                    0, 0, 0,
+                    GameBalanceConfig.GIT_CLONE_DAMAGE,
+                    GameBalanceConfig.GLOBAL_ULTIMATE_COOLDOWN_MS);
+        };
+    }
 }
