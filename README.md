@@ -46,106 +46,7 @@ Este proyecto es el backend de la aplicación, construido con **Spring Boot** y 
 git clone https://github.com/FemcodeFighters/Back-FemCodeFighters.git
 ```
 
-#### 2. Estructura del proyecto
-📦src
- ┣ 📂main
- ┃ ┣ 📂java
- ┃ ┃ ┗ 📂com
- ┃ ┃ ┃ ┗ 📂code
- ┃ ┃ ┃ ┃ ┗ 📂fighters
- ┃ ┃ ┃ ┃ ┃ ┣ 📂config
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜GameBalanceConfig.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜SecurityConfig.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserDetailsConfig.java
- ┃ ┃ ┃ ┃ ┃ ┣ 📂controller
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜AuthController.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜HealthController.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlayerController.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserController.java
- ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂request
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂updatePlayer
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜UpdAccessoryRequestDTO.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜UpdAllRequestDTO.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜UpdEyeColorRequestDTO.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜UpdHairRequestDTO.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜UpdOutfitRequestDTO.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜UpdSkinColorRequestDTO.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UpdUltimateRequestDTO.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂updateUser
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜UpdUserEmailRequestDTO.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜UpdUserNameRequestDTO.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UpdUserPassRequestDTO.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜LoginRequestDTO.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜RegisterRequestDTO.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📂response
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜AuthResponseDTO.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ErrorResponseDTO.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlayerResponseDTO.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜RankingResponseDTO.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜UltimateConfigResponseDTO.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserResponseDTO.java
- ┃ ┃ ┃ ┃ ┃ ┣ 📂entity
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂enums
- ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UltimateSkill.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜Player.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜User.java
- ┃ ┃ ┃ ┃ ┃ ┣ 📂exception
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜EmailAlreadyExistsException.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜GlobalExceptionHandler.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜InvalidPasswordException.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlayerNotFoundException.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜UserNameAlreadyExistsException.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserNotFoundException.java
- ┃ ┃ ┃ ┃ ┃ ┣ 📂mapper
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜AuthMapper.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlayerMapper.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserMapper.java
- ┃ ┃ ┃ ┃ ┃ ┣ 📂repository
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlayerRepository.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserRepository.java
- ┃ ┃ ┃ ┃ ┃ ┣ 📂security
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜JwtAuthFilter.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜JwtService.java
- ┃ ┃ ┃ ┃ ┃ ┣ 📂service
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜AuthService.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜AuthServiceImpl.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlayerService.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlayerServiceImpl.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜UserService.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserServiceImpl.java
- ┃ ┃ ┃ ┃ ┃ ┗ 📜FightersApplication.java
- ┃ ┗ 📂resources
- ┃ ┃ ┣ 📂static
- ┃ ┃ ┣ 📂templates
- ┃ ┃ ┗ 📜application.properties
- ┗ 📂test
- ┃ ┣ 📂java
- ┃ ┃ ┗ 📂com
- ┃ ┃ ┃ ┗ 📂code
- ┃ ┃ ┃ ┃ ┗ 📂fighters
- ┃ ┃ ┃ ┃ ┃ ┣ 📂config
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜SecurityConfigTest.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserDetailsConfigTest.java
- ┃ ┃ ┃ ┃ ┃ ┣ 📂controller
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜AuthControllerTest.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlayerControllerTest.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserControllerTest.java
- ┃ ┃ ┃ ┃ ┃ ┣ 📂mapper
- ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜PlayerMapperTest.java
- ┃ ┃ ┃ ┃ ┃ ┣ 📂repository
- ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜RepositoryTest.java
- ┃ ┃ ┃ ┃ ┃ ┣ 📂security
- ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜JwtServiceTest.java
- ┃ ┃ ┃ ┃ ┃ ┣ 📂service
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜AuthServiceImplTest.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlayerServiceImplTest.java
- ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserServiceImplTest.java
- ┃ ┃ ┃ ┃ ┃ ┗ 📜FightersApplicationTests.java
- ┃ ┗ 📂resources
- ┃ ┃ ┗ 📜application-test.properties
-
-#### 3. Configurar variables de entorno
+#### 2. Configurar variables de entorno
 
 Crea un archivo `.env` en la raíz del proyecto:
 
@@ -158,13 +59,13 @@ DB_PASS=tu_contraseña
 JWT_SECRET=tu_clave_secreta_de_al_menos_32_caracteres
 ```
 
-#### 4. Crear la base de datos
+#### 3. Crear la base de datos
 
 ```sql
 CREATE DATABASE codefighters;
 ```
 
-#### 5. Ejecutar la aplicación
+#### 4. Ejecutar la aplicación
 
 ```bash
 ./mvnw spring-boot:run
