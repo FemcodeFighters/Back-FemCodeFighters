@@ -31,8 +31,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        // 1. IMPORTANTE: Ignorar peticiones OPTIONS (CORS Preflight)
-        // Esto evita el 403 antes de que el navegador envíe el Token
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             filterChain.doFilter(request, response);
             return;
@@ -40,7 +38,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
 
-        // 2. Si no hay cabecera o no empieza con Bearer, seguimos al siguiente filtro
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -48,7 +45,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         final String token = authHeader.substring(7);
 
-        // 3. DEBUG: Verificar si el Token es válido según el JwtService
         if (!jwtService.isValid(token)) {
             System.out.println("DEBUG JWT: El token recibido no es válido o ha expirado.");
             filterChain.doFilter(request, response);
@@ -58,7 +54,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         final String email = jwtService.extractEmail(token);
         System.out.println("DEBUG JWT: Token detectado para el usuario: " + email);
 
-        // 4. Autenticar al usuario si el contexto está vacío
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
