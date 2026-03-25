@@ -2,6 +2,7 @@ package com.code.fighters.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -238,4 +239,11 @@ public class PlayerServiceImpl implements PlayerService {
                     GameBalanceConfig.GLOBAL_ULTIMATE_COOLDOWN_MS);
         };
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<PlayerResponseDTO> getCharacterById(Long playerId) {
+    return playerRepository.findById(playerId)
+            .map(playerMapper::toDto);
+}
 }

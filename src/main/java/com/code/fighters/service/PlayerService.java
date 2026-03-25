@@ -11,6 +11,7 @@ import com.code.fighters.dto.request.updatePlayer.UpdSkinColorRequestDTO;
 import com.code.fighters.dto.request.updatePlayer.UpdUltimateRequestDTO;
 import com.code.fighters.dto.response.PlayerResponseDTO;
 import com.code.fighters.dto.response.UltimateConfigResponseDTO;
+import java.util.Optional;
 
 public interface PlayerService {
     PlayerResponseDTO getCharacter(String email);
@@ -25,5 +26,6 @@ public interface PlayerService {
     PlayerResponseDTO useUltimate(String email);
     void updateStats(String email, boolean won);
     List<PlayerResponseDTO> getRanking();
-    public UltimateConfigResponseDTO getUltimateConfig(String username);
+    UltimateConfigResponseDTO getUltimateConfig(String username);
+    Optional<PlayerResponseDTO> getCharacterById(Long playerId);
 }

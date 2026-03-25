@@ -123,7 +123,6 @@ public class PlayerController {
     public ResponseEntity<Void> updateCombatStats(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable boolean won) {
-
         playerService.updateStats(userDetails.getUsername(), won);
         return ResponseEntity.ok().build();
     }
@@ -133,5 +132,12 @@ public class PlayerController {
             @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(
                 playerService.getUltimateConfig(userDetails.getUsername()));
+    }
+
+    @GetMapping("/{playerId}/character")
+    public ResponseEntity<PlayerResponseDTO> getCharacterById(@PathVariable Long playerId) {
+        return playerService.getCharacterById(playerId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
