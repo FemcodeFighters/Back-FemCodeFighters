@@ -35,6 +35,7 @@ public class GameLoopServiceImpl implements GameLoopService {
                 room.updateEnemy();
                 room.checkCollisions();
                 broadcastState(room);
+                room.resetAllAttacks();
             }
 
             if (room.getPhase() == GamePhase.WIN || room.getPhase() == GamePhase.LOSE) {

@@ -71,16 +71,16 @@ public class GameRoom {
     }
 
     private PlayerState applyInput(PlayerState player, PlayerInput input) {
-        return switch (input.action()) {
-            case "MOVE_LEFT" -> player.move(-5, false);
-            case "MOVE_RIGHT" -> player.move(5, true);
-            case "JUMP" -> !player.jumping() ? player.jump(-15) : player;
-            case "ATTACK" -> player.setCombatState(true, false);
-            case "ULTIMATE" -> player.setCombatState(false, true);
-            case "IDLE" -> player.stopAttacking();
-            default -> player;
-        };
-    }
+    return switch (input.action()) {
+        case "MOVE_LEFT" -> player.move(-5, false);
+        case "MOVE_RIGHT" -> player.move(5, true);
+        case "JUMP" -> !player.jumping() ? player.jump(-15) : player;
+        case "ATTACK" -> player.setCombatState(true, false);
+        case "ULTIMATE" -> player.setCombatState(false, true);
+        case "IDLE" -> player; 
+        default -> player;
+    };
+}
 
     public void updateEnemy() {
         if (phase != GamePhase.PLAYING || !enemy.alive())
@@ -120,7 +120,8 @@ public class GameRoom {
             if (p.isHitting(enemy)) {
                 int dmg = p.usingUltimate() ? p.getUltimateDamage() : p.getAttackDamage();
                 this.enemy = enemy.takeDamage(dmg);
-                p = p.addDamageDealt(dmg).stopAttacking();
+                //p = p.addDamageDealt(dmg).stopAttacking();
+                p = p.addDamageDealt(dmg);
             }
             players.put(pid, p);
         }
@@ -142,4 +143,13 @@ public class GameRoom {
                 phase,
                 maxPlayers);
     }
+
+    public void resetAllAttacks() {
+    for (String id : players.keySet()) {
+        PlayerState p = players.get(id);
+        if (p.attacking() || p.usingUltimate()) {
+            players.put(id, p.stopAttacking());
+        }
+    }
+}
 }
