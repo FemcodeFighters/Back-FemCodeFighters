@@ -120,7 +120,6 @@ public class GameRoom {
             if (p.isHitting(enemy)) {
                 int dmg = p.usingUltimate() ? p.getUltimateDamage() : p.getAttackDamage();
                 this.enemy = enemy.takeDamage(dmg);
-                //p = p.addDamageDealt(dmg).stopAttacking();
                 p = p.addDamageDealt(dmg);
             }
             players.put(pid, p);
