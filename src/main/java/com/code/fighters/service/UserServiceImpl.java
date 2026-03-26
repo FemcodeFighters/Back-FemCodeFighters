@@ -87,7 +87,6 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(findByEmail(email));
     }
 
-    // helper
     private User findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
