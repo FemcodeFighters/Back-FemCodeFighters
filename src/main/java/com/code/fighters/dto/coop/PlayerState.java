@@ -4,15 +4,15 @@ public record PlayerState(
         String playerId, float x, float y, float velocityY,
         int health, int maxHealth, boolean alive,
         boolean attacking, boolean usingUltimate, boolean jumping,
-        boolean facingRight, int damageDealt, int damageTaken, int ultimatesUsed,int attackCount,
+        boolean facingRight, int damageDealt, int damageTaken, int ultimatesUsed, int attackCount,
         int ultimateCount) {
 
     private static final float GROUND_Y = 1000f;
 
     public PlayerState(String playerId) {
-        this(playerId, 200, 1000f, 0, 100, 100, true, 
-             false, false, false, true, 0, 0, 0,
-             0, 0);
+        this(playerId, 200, 1000f, 0, 100, 100, true,
+                false, false, false, true, 0, 0, 0,
+                0, 0);
     }
 
     public PlayerState updatePhysics() {
@@ -30,27 +30,28 @@ public record PlayerState(
             stillJumping = false;
         }
         return new PlayerState(playerId, x, newY, newVelocityY, health, maxHealth, alive,
-                attacking, usingUltimate, stillJumping, facingRight, damageDealt, damageTaken, ultimatesUsed,attackCount,ultimateCount);
+                attacking, usingUltimate, stillJumping, facingRight, damageDealt, damageTaken, ultimatesUsed,
+                attackCount, ultimateCount);
     }
 
     public PlayerState takeDamage(int amount) {
         int newHealth = Math.max(0, this.health - amount);
         return new PlayerState(playerId, x, y, velocityY, newHealth, maxHealth, newHealth > 0,
-                attacking, usingUltimate, jumping, facingRight, 
+                attacking, usingUltimate, jumping, facingRight,
                 damageDealt, damageTaken + amount, ultimatesUsed,
                 attackCount, ultimateCount);
     }
 
     public PlayerState move(float dx, boolean facing) {
-        return new PlayerState(playerId, x + dx, y, velocityY, health, maxHealth, alive, 
-                attacking, usingUltimate, jumping, facing, 
+        return new PlayerState(playerId, x + dx, y, velocityY, health, maxHealth, alive,
+                attacking, usingUltimate, jumping, facing,
                 damageDealt, damageTaken, ultimatesUsed,
                 attackCount, ultimateCount);
     }
 
     public PlayerState jump(float power) {
-        return new PlayerState(playerId, x, y, power, health, maxHealth, alive, 
-                attacking, usingUltimate, true, facingRight, 
+        return new PlayerState(playerId, x, y, power, health, maxHealth, alive,
+                attacking, usingUltimate, true, facingRight,
                 damageDealt, damageTaken, ultimatesUsed,
                 attackCount, ultimateCount);
     }
@@ -58,22 +59,22 @@ public record PlayerState(
     public PlayerState setCombatState(boolean atk, boolean ult) {
         int newAttackCount = atk ? attackCount + 1 : attackCount;
         int newUltimateCount = ult ? ultimateCount + 1 : ultimateCount;
-        return new PlayerState(playerId, x, y, velocityY, health, maxHealth, alive, 
+        return new PlayerState(playerId, x, y, velocityY, health, maxHealth, alive,
                 atk, ult, jumping, facingRight,
                 damageDealt, damageTaken, ultimatesUsed + (ult ? 1 : 0),
                 newAttackCount, newUltimateCount);
     }
 
     public PlayerState stopAttacking() {
-        return new PlayerState(playerId, x, y, velocityY, health, maxHealth, alive, 
+        return new PlayerState(playerId, x, y, velocityY, health, maxHealth, alive,
                 false, false, jumping, facingRight,
                 damageDealt, damageTaken, ultimatesUsed,
                 attackCount, ultimateCount);
     }
 
     public PlayerState addDamageDealt(int amt) {
-        return new PlayerState(playerId, x, y, velocityY, health, maxHealth, alive, 
-                attacking, usingUltimate, jumping, facingRight, 
+        return new PlayerState(playerId, x, y, velocityY, health, maxHealth, alive,
+                attacking, usingUltimate, jumping, facingRight,
                 damageDealt + amt, damageTaken, ultimatesUsed,
                 attackCount, ultimateCount);
     }
@@ -91,4 +92,12 @@ public record PlayerState(
     public int getUltimateDamage() {
         return 40;
     }
+
+    public PlayerState heal(int amount) {
+    int newHealth = Math.min(maxHealth, health + amount);
+    return new PlayerState(playerId, x, y, velocityY, newHealth, maxHealth, alive,
+            attacking, usingUltimate, jumping, facingRight,
+            damageDealt, damageTaken, ultimatesUsed,
+            attackCount, ultimateCount);
+}
 }

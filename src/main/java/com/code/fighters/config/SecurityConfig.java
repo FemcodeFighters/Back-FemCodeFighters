@@ -41,6 +41,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/health").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/ws-game/**").permitAll()
                         .requestMatchers("/api/coop/**").permitAll()
                         .requestMatchers("/api/player/*/character").permitAll()

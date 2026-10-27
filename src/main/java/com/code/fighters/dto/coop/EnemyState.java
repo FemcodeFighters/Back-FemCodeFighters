@@ -16,7 +16,7 @@ public record EnemyState(
     private static final int ATTACK_RANGE_Y = 60;
 
     public EnemyState() {
-        this(600, 300, 500, 500, true, 5, false, false, 0);
+        this(600, 1000, 500, 500, true, 5, false, false, 0);
     }
 
     public EnemyState takeDamage(int amount) {

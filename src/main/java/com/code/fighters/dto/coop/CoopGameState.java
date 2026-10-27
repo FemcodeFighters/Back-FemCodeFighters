@@ -9,5 +9,6 @@ public record CoopGameState(
                 EnemyState enemy,
                 long tick,
                 GamePhase phase,
-                int maxPlayers) {
+                int maxPlayers,
+                Map<String, String> outcomes) {
 }
