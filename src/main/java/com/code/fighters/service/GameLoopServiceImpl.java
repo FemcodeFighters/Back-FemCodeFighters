@@ -29,18 +29,27 @@ public class GameLoopServiceImpl implements GameLoopService {
     @Scheduled(fixedRate = 50)
     public void gameTick() {
         for (GameRoom room : gameRoomRepository.findAll()) {
-
             if (room.getPhase() == GamePhase.PLAYING) {
                 room.processInputs();
                 room.updateEnemy();
                 room.checkCollisions();
+            }
+
+            boolean finished = room.getPhase() == GamePhase.WIN
+                    || room.getPhase() == GamePhase.LOSE;
+
+            // Se guarda ANTES de avisar a los clientes: así, cuando piden el ranking, ya
+            // está actualizado
+            if (finished) {
+                persistMatch(room);
+            }
+
+            if (finished || room.getPhase() == GamePhase.PLAYING) {
                 broadcastState(room);
                 room.resetAllAttacks();
             }
 
-            if (room.getPhase() == GamePhase.WIN || room.getPhase() == GamePhase.LOSE) {
-                broadcastState(room);
-                persistMatch(room);
+            if (finished) {
                 log.info("Sala {} finalizada. Victoria: {}. Eliminando sala...",
                         room.getRoomId(), room.getPhase() == GamePhase.WIN);
                 gameRoomRepository.remove(room.getRoomId());
