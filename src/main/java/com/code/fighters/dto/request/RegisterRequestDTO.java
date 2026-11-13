@@ -1,5 +1,7 @@
 package com.code.fighters.dto.request;
 
+import com.code.fighters.utils.EmailUtils;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -13,4 +15,9 @@ public record RegisterRequestDTO(
 
     @NotBlank(message = "Se requiere Contraseña")
     String password
-) {}
+) {
+
+    public RegisterRequestDTO{
+        email=EmailUtils.normalize(email);
+    }
+}

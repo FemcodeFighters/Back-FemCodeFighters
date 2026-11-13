@@ -23,8 +23,8 @@ public class GameBalanceConfig {
     public static final double GIT_CLONE_FRIENDLY_FIRE_CHANCE = 0.1;
 
     public static final int COOP_ENEMY_COUNT = 6;
-    public static final int COOP_ENEMY_BASE_HEALTH = 100; // está en 500
-    public static final int COOP_ENEMY_HEALTH_PER_STAGE = 100;
+    public static final int COOP_ENEMY_BASE_HEALTH = 1; // está en 500
+    public static final int COOP_ENEMY_HEALTH_PER_STAGE = 10;
     public static final int COOP_ENEMY_BASE_DAMAGE = 5;
     public static final int COOP_ENEMY_DAMAGE_PER_STAGE = 1;
     public static final int ENEMY_KILL_HEAL = 30;

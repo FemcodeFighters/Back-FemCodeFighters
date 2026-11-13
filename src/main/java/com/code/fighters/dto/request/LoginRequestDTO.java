@@ -1,5 +1,7 @@
 package com.code.fighters.dto.request;
 
+import com.code.fighters.utils.EmailUtils;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -12,4 +14,7 @@ public record LoginRequestDTO(
     String password
 ) {
 
+    public LoginRequestDTO{
+        email=EmailUtils.normalize(email);
+    }
 }
