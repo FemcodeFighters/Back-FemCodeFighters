@@ -41,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
         if (userRepository.existsByEmail(request.email())) {
             throw new EmailAlreadyExistsException(request.email());
         }
-        if (userRepository.existsByUsername(request.username())) {
+        if (userRepository.existsByUsernameIgnoreCase(request.username())) {
             throw new UserNameAlreadyExistsException(request.username());
         }
 

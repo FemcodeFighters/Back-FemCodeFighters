@@ -59,11 +59,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserResponseDTO updateUsername(String email, UpdUserNameRequestDTO request) {
         User user = findByEmail(email);
-
-        if (userRepository.existsByUsername(request.username())) {
+        if (userRepository.existsByUsernameIgnoreCaseAndIdNot(request.username(), user.getId())) {
             throw new UserNameAlreadyExistsException(request.username());
         }
-
         user.setUsername(request.username());
         return userMapper.toDto(userRepository.save(user));
     }
