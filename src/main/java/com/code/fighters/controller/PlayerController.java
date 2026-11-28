@@ -1,12 +1,9 @@
 package com.code.fighters.controller;
 
-import java.security.Principal;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,86 +29,75 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/player")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class PlayerController {
 
     private final PlayerService playerService;
 
     @GetMapping
-    public ResponseEntity<PlayerResponseDTO> getCharacter(Principal principal) {
-        if (principal == null) {
-            return ResponseEntity.status(401).build();
-        }
-        return ResponseEntity.ok(playerService.getCharacter(principal.getName()));
+    public ResponseEntity<PlayerResponseDTO> getCharacter(
+            @AuthenticationPrincipal(expression = "username") String email) {
+        return ResponseEntity.ok(playerService.getCharacter(email));
     }
 
     @PatchMapping("/skin")
     public ResponseEntity<PlayerResponseDTO> updateSkinColor(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal(expression = "username") String email,
             @Valid @RequestBody UpdSkinColorRequestDTO request) {
-        return ResponseEntity.ok(
-                playerService.updateSkinColor(userDetails.getUsername(), request));
+        return ResponseEntity.ok(playerService.updateSkinColor(email, request));
     }
 
     @PatchMapping("/hair")
     public ResponseEntity<PlayerResponseDTO> updateHair(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal(expression = "username") String email,
             @Valid @RequestBody UpdHairRequestDTO request) {
-        return ResponseEntity.ok(
-                playerService.updateHair(userDetails.getUsername(), request));
+        return ResponseEntity.ok(playerService.updateHair(email, request));
     }
 
     @PatchMapping("/eyes")
     public ResponseEntity<PlayerResponseDTO> updateEyeColor(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal(expression = "username") String email,
             @Valid @RequestBody UpdEyeColorRequestDTO request) {
-        return ResponseEntity.ok(
-                playerService.updateEyeColor(userDetails.getUsername(), request));
+        return ResponseEntity.ok(playerService.updateEyeColor(email, request));
     }
 
     @PatchMapping("/outfit")
     public ResponseEntity<PlayerResponseDTO> updateOutfit(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal(expression = "username") String email,
             @Valid @RequestBody UpdOutfitRequestDTO request) {
-        return ResponseEntity.ok(
-                playerService.updateOutfit(userDetails.getUsername(), request));
+        return ResponseEntity.ok(playerService.updateOutfit(email, request));
     }
 
     @PatchMapping("/accessory")
     public ResponseEntity<PlayerResponseDTO> updateAccessory(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal(expression = "username") String email,
             @Valid @RequestBody UpdAccessoryRequestDTO request) {
-        return ResponseEntity.ok(
-                playerService.updateAccessory(userDetails.getUsername(), request));
+        return ResponseEntity.ok(playerService.updateAccessory(email, request));
     }
 
     @PatchMapping("/all")
     public ResponseEntity<PlayerResponseDTO> updateAll(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal(expression = "username") String email,
             @Valid @RequestBody UpdAllRequestDTO request) {
-        return ResponseEntity.ok(
-                playerService.updateAll(userDetails.getUsername(), request));
+        return ResponseEntity.ok(playerService.updateAll(email, request));
     }
 
     @PostMapping("/reset")
     public ResponseEntity<PlayerResponseDTO> resetCharacter(
-            @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(playerService.resetCharacter(userDetails.getUsername()));
+            @AuthenticationPrincipal(expression = "username") String email) {
+        return ResponseEntity.ok(playerService.resetCharacter(email));
     }
 
     @PatchMapping("/ultimate")
     public ResponseEntity<PlayerResponseDTO> updateUltimateSkill(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal(expression = "username") String email,
             @Valid @RequestBody UpdUltimateRequestDTO request) {
-        return ResponseEntity.ok(
-                playerService.updateUltimateSkill(userDetails.getUsername(), request));
+        return ResponseEntity.ok(playerService.updateUltimateSkill(email, request));
     }
 
     @PostMapping("/use-ultimate")
     public ResponseEntity<PlayerResponseDTO> useUltimate(
-            @AuthenticationPrincipal UserDetails userDetails) {
-        PlayerResponseDTO updatedPlayer = playerService.useUltimate(userDetails.getUsername());
-        return ResponseEntity.ok(updatedPlayer);
+            @AuthenticationPrincipal(expression = "username") String email) {
+        return ResponseEntity.ok(playerService.useUltimate(email));
     }
 
     @GetMapping("/ranking")
@@ -121,17 +107,16 @@ public class PlayerController {
 
     @PostMapping("/combat-result/{won}")
     public ResponseEntity<Void> updateCombatStats(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal(expression = "username") String email,
             @PathVariable boolean won) {
-        playerService.updateStats(userDetails.getUsername(), won);
+        playerService.updateStats(email, won);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/ultimate-config")
     public ResponseEntity<UltimateConfigResponseDTO> getUltimateConfig(
-            @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(
-                playerService.getUltimateConfig(userDetails.getUsername()));
+            @AuthenticationPrincipal(expression = "username") String email) {
+        return ResponseEntity.ok(playerService.getUltimateConfig(email));
     }
 
     @GetMapping("/{playerId}/character")

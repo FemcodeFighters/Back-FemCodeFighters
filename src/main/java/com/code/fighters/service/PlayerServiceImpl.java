@@ -1,8 +1,10 @@
 package com.code.fighters.service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,95 +46,64 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     @Transactional
     public PlayerResponseDTO updateSkinColor(String email, UpdSkinColorRequestDTO request) {
-        Player player = findByEmail(email);
-        player.setSkinColor(request.skinColor());
-        player.setUpdatedAt(LocalDateTime.now());
-        return playerMapper.toDto(playerRepository.save(player));
+        return updateAndSave(email, p -> p.setSkinColor(request.skinColor()));
     }
 
     @Override
     @Transactional
     public PlayerResponseDTO updateHair(String email, UpdHairRequestDTO request) {
-        Player player = findByEmail(email);
-        player.setHairStyle(request.hairStyle());
-        player.setHairColor(request.hairColor());
-        player.setUpdatedAt(LocalDateTime.now());
-        return playerMapper.toDto(playerRepository.save(player));
+        return updateAndSave(email, p -> {
+            p.setHairStyle(request.hairStyle());
+            p.setHairColor(request.hairColor());
+        });
     }
 
     @Override
     @Transactional
     public PlayerResponseDTO updateEyeColor(String email, UpdEyeColorRequestDTO request) {
-        Player player = findByEmail(email);
-        player.setEyeColor(request.eyeColor());
-        player.setUpdatedAt(LocalDateTime.now());
-        return playerMapper.toDto(playerRepository.save(player));
+        return updateAndSave(email, p -> p.setEyeColor(request.eyeColor()));
     }
 
     @Override
     @Transactional
     public PlayerResponseDTO updateOutfit(String email, UpdOutfitRequestDTO request) {
-        Player player = findByEmail(email);
-        player.setOutfit(request.outfit());
-        player.setOutfitColor(request.outfitColor());
-        player.setUpdatedAt(LocalDateTime.now());
-        return playerMapper.toDto(playerRepository.save(player));
+        return updateAndSave(email, p -> {
+            p.setOutfit(request.outfit());
+            p.setOutfitColor(request.outfitColor());
+        });
     }
 
     @Override
     @Transactional
     public PlayerResponseDTO updateAccessory(String email, UpdAccessoryRequestDTO request) {
-        Player player = findByEmail(email);
-        player.setAccessory(request.accessory());
-        player.setUpdatedAt(LocalDateTime.now());
-        return playerMapper.toDto(playerRepository.save(player));
+        return updateAndSave(email, p -> p.setAccessory(request.accessory()));
     }
 
     @Override
     @Transactional
     public PlayerResponseDTO updateAll(String email, UpdAllRequestDTO request) {
-        Player player = findByEmail(email);
-        player.setSkinColor(request.skinColor());
-        player.setHairStyle(request.hairStyle());
-        player.setHairColor(request.hairColor());
-        player.setEyeColor(request.eyeColor());
-        player.setOutfit(request.outfit());
-        player.setOutfitColor(request.outfitColor());
-        player.setAccessory(request.accessory());
-        player.setUltimateSkill(request.ultimateSkill());
-        player.setUpdatedAt(LocalDateTime.now());
-        return playerMapper.toDto(playerRepository.save(player));
+        return updateAndSave(email, p -> {
+            p.setSkinColor(request.skinColor());
+            p.setHairStyle(request.hairStyle());
+            p.setHairColor(request.hairColor());
+            p.setEyeColor(request.eyeColor());
+            p.setOutfit(request.outfit());
+            p.setOutfitColor(request.outfitColor());
+            p.setAccessory(request.accessory());
+            p.setUltimateSkill(request.ultimateSkill());
+        });
     }
 
     @Override
     @Transactional
     public PlayerResponseDTO resetCharacter(String email) {
-        Player player = findByEmail(email);
-        player.setSkinColor("#f5c5a3");
-        player.setHairStyle("ponytail");
-        player.setHairColor("#7c3aed");
-        player.setEyeColor("#2563eb");
-        player.setOutfit("hoodie");
-        player.setOutfitColor("#1e1b4b");
-        player.setAccessory("none");
-        player.setUpdatedAt(LocalDateTime.now());
-        return playerMapper.toDto(playerRepository.save(player));
-    }
-
-    private Player findByEmail(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(email));
-        return playerRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new PlayerNotFoundException(email));
+        return updateAndSave(email, Player::resetAppearance);
     }
 
     @Override
     @Transactional
     public PlayerResponseDTO updateUltimateSkill(String email, UpdUltimateRequestDTO request) {
-        Player player = findByEmail(email);
-        player.setUltimateSkill(request.ultimateSkill());
-        player.setUpdatedAt(LocalDateTime.now());
-        return playerMapper.toDto(playerRepository.save(player));
+        return updateAndSave(email, p -> p.setUltimateSkill(request.ultimateSkill()));
     }
 
     @Override
@@ -142,12 +113,10 @@ public class PlayerServiceImpl implements PlayerService {
         if (player.getHealth() <= 0) {
             throw new IllegalStateException("¡Un programador derrotado no puede picar código!");
         }
-        long cooldownSeconds = 20;
+        long cooldownSeconds = GameBalanceConfig.GLOBAL_ULTIMATE_COOLDOWN_MS / 1000;
         if (player.getLastUltimateUsed() != null) {
-            long secondsPassed = java.time.Duration.between(
-                    player.getLastUltimateUsed(),
-                    java.time.LocalDateTime.now()).getSeconds();
-
+            long secondsPassed = Duration.between(
+                    player.getLastUltimateUsed(), LocalDateTime.now()).getSeconds();
             if (secondsPassed < cooldownSeconds) {
                 throw new RuntimeException(
                         "Habilidad en enfriamiento. Faltan " + (cooldownSeconds - secondsPassed) + "s");
@@ -156,52 +125,26 @@ public class PlayerServiceImpl implements PlayerService {
 
         switch (player.getUltimateSkill()) {
             case FRIDAY_DEPLOY -> applyFridayDeploy(player);
-            case SPAGHETTI_CODE -> {
-                List<Player> enemies = playerRepository.findAllExcept(player.getId());
-                applySpaghettiStorm(enemies);
+            case SPAGHETTI_CODE -> applySpaghettiStorm(playerRepository.findAllExcept(player.getId()));
+            case GIT_CLONE -> {
+                // El clon es solo visual: se dibuja en el cliente
             }
-            case GIT_CLONE -> applyGitClone(player);
         }
 
-        player.setLastUltimateUsed(java.time.LocalDateTime.now());
+        player.setLastUltimateUsed(LocalDateTime.now());
         return playerMapper.toDto(playerRepository.save(player));
-    }
-
-    private void applyFridayDeploy(Player player) {
-        int newHealth = Math.min(player.getHealth() + GameBalanceConfig.FRIDAY_DEPLOY_HEAL, 100);
-        player.setHealth(newHealth);
-    }
-
-    private void applySpaghettiStorm(List<Player> enemies) {
-        int damage = GameBalanceConfig.SPAGHETTI_TICK_DAMAGE;
-
-        enemies.forEach(enemy -> {
-            int newHealth = Math.max(enemy.getHealth() - damage, 0);
-            enemy.setHealth(newHealth);
-        });
-    }
-
-    private void applyGitClone(Player owner) {
-        long lifespan = GameBalanceConfig.CLONE_LIFESPAN_MS;
-        LocalDateTime expirationTime = LocalDateTime.now().plusNanos(lifespan * 1_000_000);
-
-        System.out.println("Invocando clon para: " + owner.getUser().getEmail() + " hasta " + expirationTime);
-
     }
 
     @Override
     @Transactional
     public void updateStats(String email, boolean won) {
-        Player player = findByEmail(email);
-
-        if (won) {
-            player.setWins(player.getWins() + 1);
-        } else {
-            player.setLosses(player.getLosses() + 1);
-        }
-
-        player.setUpdatedAt(LocalDateTime.now());
-        playerRepository.save(player);
+        updateAndSave(email, p -> {
+            if (won) {
+                p.setWins(p.getWins() + 1);
+            } else {
+                p.setLosses(p.getLosses() + 1);
+            }
+        });
     }
 
     @Override
@@ -243,7 +186,32 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     @Transactional(readOnly = true)
     public Optional<PlayerResponseDTO> getCharacterById(Long playerId) {
-    return playerRepository.findById(playerId)
-            .map(playerMapper::toDto);
-}
+        return playerRepository.findById(playerId)
+                .map(playerMapper::toDto);
+    }
+
+    /** Patrón común de todas las actualizaciones: buscar, cambiar, marcar la fecha, guardar y devolver. */
+    private PlayerResponseDTO updateAndSave(String email, Consumer<Player> changes) {
+        Player player = findByEmail(email);
+        changes.accept(player);
+        player.setUpdatedAt(LocalDateTime.now());
+        return playerMapper.toDto(playerRepository.save(player));
+    }
+
+    private Player findByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
+        return playerRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new PlayerNotFoundException(email));
+    }
+
+    private void applyFridayDeploy(Player player) {
+        int newHealth = Math.min(player.getHealth() + GameBalanceConfig.FRIDAY_DEPLOY_HEAL, Player.MAX_HEALTH);
+        player.setHealth(newHealth);
+    }
+
+    private void applySpaghettiStorm(List<Player> enemies) {
+        int damage = GameBalanceConfig.SPAGHETTI_TICK_DAMAGE;
+        enemies.forEach(enemy -> enemy.setHealth(Math.max(enemy.getHealth() - damage, 0)));
+    }
 }

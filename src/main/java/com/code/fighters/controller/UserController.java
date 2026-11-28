@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -30,8 +29,8 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<UserResponseDTO> getProfile(
-            @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(userService.getProfile(userDetails.getUsername()));
+            @AuthenticationPrincipal(expression = "username") String email) {
+        return ResponseEntity.ok(userService.getProfile(email));
     }
 
     @GetMapping
@@ -41,34 +40,30 @@ public class UserController {
 
     @PatchMapping("/email")
     public ResponseEntity<UserResponseDTO> updateEmail(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal(expression = "username") String email,
             @Valid @RequestBody UpdUserEmailRequestDTO request) {
-        return ResponseEntity.ok(
-            userService.updateEmail(userDetails.getUsername(), request)
-        );
+        return ResponseEntity.ok(userService.updateEmail(email, request));
     }
 
     @PatchMapping("/username")
     public ResponseEntity<UserResponseDTO> updateUsername(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal(expression = "username") String email,
             @Valid @RequestBody UpdUserNameRequestDTO request) {
-        return ResponseEntity.ok(
-            userService.updateUsername(userDetails.getUsername(), request)
-        );
+        return ResponseEntity.ok(userService.updateUsername(email, request));
     }
 
     @PatchMapping("/password")
     public ResponseEntity<Void> changePassword(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal(expression = "username") String email,
             @Valid @RequestBody UpdUserPassRequestDTO request) {
-        userService.changePassword(userDetails.getUsername(), request);
+        userService.changePassword(email, request);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping
     public ResponseEntity<Void> deleteAccount(
-            @AuthenticationPrincipal UserDetails userDetails) {
-        userService.deleteAccount(userDetails.getUsername());
+            @AuthenticationPrincipal(expression = "username") String email) {
+        userService.deleteAccount(email);
         return ResponseEntity.noContent().build();
     }
 }
